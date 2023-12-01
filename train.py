@@ -1,3 +1,5 @@
+import augmentations
+
 import argparse
 import collections
 import warnings
