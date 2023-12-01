@@ -1,5 +1,7 @@
 from typing import Callable
 from typing import List
+import sys
+print(sys.path)
 
 import augmentations.spectrogram_augmentations
 import augmentations.wave_augmentations
