@@ -38,7 +38,7 @@
             "type": "LJspeechDataset",
             "args": {
               "part": "train",
-              "data_dir": "/home/artem/hifigan/data/datasets/ljspeech",
+              "data_dir": "/kaggle/input/ljspeech/data/datasets/ljspeech",
               "max_audio_length": 20.0
             }
           }

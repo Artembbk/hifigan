@@ -48,12 +48,9 @@ class MPD(nn.Module):
         self.mpds = nn.ModuleList(self.mpds)
 
     def forward(self, x):
-        print("fdfd")
         outs = []
         for discriminator in self.mpds:
             outs.append(discriminator(x))
-
-        print(outs)
         return outs
 
 
