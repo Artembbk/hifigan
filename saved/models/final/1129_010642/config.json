@@ -1,0 +1,152 @@
+{
+    "name": "final",
+    "n_gpu": 1,
+    "preprocessing": {
+        "sr": 16000,
+        "spectrogram": {
+            "type": "MelSpectrogram",
+            "args": {}
+        },
+        "log_spec": false
+    },
+    "augmentations": {
+        "wave": [],
+        "spectrogram": []
+    },
+    "arch": {
+        "type": "DeepSpeech2pacModel",
+        "args": {
+            "n_feats": 128,
+            "hidden": 512,
+            "conv_num": 3,
+            "conv_type": "2d",
+            "kernel_sizes": [
+                [
+                    41,
+                    11
+                ],
+                [
+                    21,
+                    11
+                ],
+                [
+                    21,
+                    11
+                ]
+            ],
+            "strides": [
+                [
+                    2,
+                    2
+                ],
+                [
+                    2,
+                    1
+                ],
+                [
+                    2,
+                    1
+                ]
+            ],
+            "channels": [
+                32,
+                32,
+                96
+            ],
+            "paddings": [
+                [
+                    10,
+                    5
+                ],
+                [
+                    10,
+                    5
+                ],
+                [
+                    10,
+                    5
+                ]
+            ],
+            "rnn_type": "gru",
+            "rnn_layers": 5,
+            "rnn_bidirectional": true,
+            "batch_norm_conv": true
+        }
+    },
+    "data": {
+        "train": {
+            "num_workers": 8,
+            "datasets": [
+                {
+                    "type": "LJspeechDataset",
+                    "args": {
+                        "part": "train",
+                        "data_dir": "/home/artem/hifigan",
+                        "max_audio_length": 20.0
+                    }
+                }
+            ]
+        }
+    },
+    "optimizer": {
+        "type": "Adam",
+        "args": {
+            "lr": 0.0003
+        }
+    },
+    "loss": {
+        "type": "CTCLoss",
+        "args": {}
+    },
+    "metrics": {
+        "train": [
+            {
+                "type": "ArgmaxWERMetric",
+                "args": {
+                    "name": "WER (argmax)"
+                }
+            },
+            {
+                "type": "ArgmaxCERMetric",
+                "args": {
+                    "name": "CER (argmax)"
+                }
+            }
+        ],
+        "val": [
+            {
+                "type": "ArgmaxWERMetric",
+                "args": {
+                    "name": "WER (argmax)"
+                }
+            },
+            {
+                "type": "ArgmaxCERMetric",
+                "args": {
+                    "name": "CER (argmax)"
+                }
+            }
+        ]
+    },
+    "lr_scheduler": {
+        "type": "OneCycleLR",
+        "args": {
+            "steps_per_epoch": 3000,
+            "epochs": 50,
+            "anneal_strategy": "cos",
+            "max_lr": 0.0003,
+            "pct_start": 0.2
+        }
+    },
+    "trainer": {
+        "epochs": 50,
+        "save_dir": "saved/",
+        "save_period": 5,
+        "verbosity": 2,
+        "monitor": "min val_loss",
+        "visualize": "wandb",
+        "wandb_project": "asr_project",
+        "len_epoch": 3000,
+        "grad_norm_clip": 10
+    }
+}

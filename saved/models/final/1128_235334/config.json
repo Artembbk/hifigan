@@ -1,0 +1,191 @@
+{
+    "name": "final",
+    "n_gpu": 1,
+    "preprocessing": {
+        "sr": 16000,
+        "spectrogram": {
+            "type": "MelSpectrogram",
+            "args": {}
+        },
+        "log_spec": true
+    },
+    "augmentations": {
+        "wave": [],
+        "spectrogram": []
+    },
+    "arch": {
+        "type": "DeepSpeech2pacModel",
+        "args": {
+            "n_feats": 128,
+            "hidden": 512,
+            "conv_num": 3,
+            "conv_type": "2d",
+            "kernel_sizes": [
+                [
+                    41,
+                    11
+                ],
+                [
+                    21,
+                    11
+                ],
+                [
+                    21,
+                    11
+                ]
+            ],
+            "strides": [
+                [
+                    2,
+                    2
+                ],
+                [
+                    2,
+                    1
+                ],
+                [
+                    2,
+                    1
+                ]
+            ],
+            "channels": [
+                32,
+                32,
+                96
+            ],
+            "paddings": [
+                [
+                    10,
+                    5
+                ],
+                [
+                    10,
+                    5
+                ],
+                [
+                    10,
+                    5
+                ]
+            ],
+            "rnn_type": "gru",
+            "rnn_layers": 5,
+            "rnn_bidirectional": true,
+            "batch_norm_conv": true
+        }
+    },
+    "data": {
+        "train": {
+            "batch_sampler": {
+                "type": "GroupLengthBatchSampler",
+                "args": {
+                    "batch_size": 40
+                }
+            },
+            "num_workers": 8,
+            "datasets": [
+                {
+                    "type": "LibrispeechDataset",
+                    "args": {
+                        "part": "train-clean-100",
+                        "data_dir": "/kaggle/input/train-clean-100-dataset",
+                        "max_audio_length": 20.0,
+                        "max_text_length": 200
+                    }
+                }
+            ]
+        },
+        "val": {
+            "batch_size": 40,
+            "num_workers": 8,
+            "datasets": [
+                {
+                    "type": "LibrispeechDataset",
+                    "args": {
+                        "part": "dev-clean",
+                        "data_dir": "/kaggle/input/train-clean-100-dataset/dev-clean-dataset",
+                        "max_audio_length": 20.0,
+                        "max_text_length": 200,
+                        "limit": 200
+                    }
+                }
+            ]
+        },
+        "test": {
+            "batch_size": 40,
+            "num_workers": 8,
+            "datasets": [
+                {
+                    "type": "LibrispeechDataset",
+                    "args": {
+                        "part": "test-clean",
+                        "data_dir": "/kaggle/input/test-clean",
+                        "max_audio_length": 20.0,
+                        "max_text_length": 200,
+                        "limit": 200
+                    }
+                }
+            ]
+        }
+    },
+    "optimizer": {
+        "type": "Adam",
+        "args": {
+            "lr": 0.0003
+        }
+    },
+    "loss": {
+        "type": "CTCLoss",
+        "args": {}
+    },
+    "metrics": {
+        "train": [
+            {
+                "type": "ArgmaxWERMetric",
+                "args": {
+                    "name": "WER (argmax)"
+                }
+            },
+            {
+                "type": "ArgmaxCERMetric",
+                "args": {
+                    "name": "CER (argmax)"
+                }
+            }
+        ],
+        "val": [
+            {
+                "type": "ArgmaxWERMetric",
+                "args": {
+                    "name": "WER (argmax)"
+                }
+            },
+            {
+                "type": "ArgmaxCERMetric",
+                "args": {
+                    "name": "CER (argmax)"
+                }
+            }
+        ]
+    },
+    "lr_scheduler": {
+        "type": "OneCycleLR",
+        "args": {
+            "steps_per_epoch": 3000,
+            "epochs": 50,
+            "anneal_strategy": "cos",
+            "max_lr": 0.0003,
+            "pct_start": 0.2
+        }
+    },
+    "trainer": {
+        "epochs": 50,
+        "save_dir": "saved/",
+        "save_period": 5,
+        "verbosity": 2,
+        "monitor": "min val_loss",
+        "visualize": "wandb",
+        "wandb_project": "asr_project",
+        "len_epoch": 3000,
+        "grad_norm_clip": 10
+    }
+}
