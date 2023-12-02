@@ -62,7 +62,7 @@ def main(config):
     discriminator_params = filter(lambda p: p.requires_grad, itertools.chain(msd.parameters(), mpd.parameters()))
     optim_d = config.init_obj(config["optimizer"]["Discriminator"], torch.optim, discriminator_params)    
 
-    loss_module = config.init_obj(config["loss"], module_loss).to(device)
+    loss_module = config.init_obj(config["loss"], module_loss)
     lr_scheduler_g = config.init_obj(config["lr_scheduler"]["Generator"], torch.optim.lr_scheduler, optim_g)
     lr_scheduler_d = config.init_obj(config["lr_scheduler"]["Discriminator"], torch.optim.lr_scheduler, optim_d)
     
