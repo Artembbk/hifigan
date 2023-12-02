@@ -67,10 +67,7 @@ def main(config):
     lr_scheduler_d = config.init_obj(config["lr_scheduler"]["Discriminator"], torch.optim.lr_scheduler, optim_d)
     
 
-    metrics = {
-        "train": [],
-        "val": []
-    }
+    metrics = config["metrics"]
 
     trainer = Trainer(
         generator,

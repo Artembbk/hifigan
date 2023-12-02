@@ -58,11 +58,11 @@ class Trainer(BaseTrainer):
         self.log_step = 50
 
         self.train_metrics = MetricTracker(
-            "loss", "grad norm", *[m.name for m in self.metrics["train"]], writer=self.writer
+            "loss", "grad norm", *[m for m in self.metrics["train"]], writer=self.writer
         )
 
         self.evaluation_metrics = MetricTracker(
-            "loss", *[m.name for m in self.metrics["val"]], writer=self.writer
+            "loss", *[m for m in self.metrics["val"]], writer=self.writer
         )
 
 
