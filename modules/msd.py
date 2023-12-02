@@ -52,8 +52,8 @@ class MSD(torch.nn.Module):
         for i, d in enumerate(self.discriminators):
             if i != 0:
                 x = self.avgpools[i-1](x)
-            x, sub_feature_maps = d(x)
-            outs.append(x)
+            x_out, sub_feature_maps = d(x)
+            outs.append(x_out)
             feature_maps.extend(sub_feature_maps)
 
         return outs, feature_maps
