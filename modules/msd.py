@@ -8,19 +8,19 @@ class SubMSD(nn.Module):
         self.leaky_relu = nn.LeakyReLU()
         self.convs = nn.Sequential(*[
             weight_norm(nn.Conv1d(1, 128, 15, 1, padding=7)),
-            self.leaky_relu(),
+            self.leaky_relu,
             weight_norm(nn.Conv1d(128, 128, 41, 2, groups=4, padding=20)),
-            self.leaky_relu(),
+            self.leaky_relu,
             weight_norm(nn.Conv1d(128, 256, 41, 2, groups=16, padding=20)),
-            self.leaky_relu(),
+            self.leaky_relu,
             weight_norm(nn.Conv1d(256, 512, 41, 4, groups=16, padding=20)),
-            self.leaky_relu(),
+            self.leaky_relu,
             weight_norm(nn.Conv1d(512, 1024, 41, 4, groups=16, padding=20)),
-            self.leaky_relu(),
+            self.leaky_relu,
             weight_norm(nn.Conv1d(1024, 1024, 41, 1, groups=16, padding=20)),
-            self.leaky_relu(),
+            self.leaky_relu,
             weight_norm(nn.Conv1d(1024, 1024, 5, 1, padding=2)),
-            self.leaky_relu(),
+            self.leaky_relu,
             weight_norm(nn.Conv1d(1024, 1, 3, 1, padding=1))
         ])
         
