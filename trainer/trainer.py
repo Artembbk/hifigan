@@ -58,11 +58,11 @@ class Trainer(BaseTrainer):
         self.log_step = 10
 
         self.train_metrics = MetricTracker(
-            "loss", "grad norm", *[m for m in self.metrics["train"]], writer=self.writer
+            "loss", "grad norm", "mel_loss", "fmap_loss", "gan_loss", *[m.name for m in self.metrics["train"]], writer=self.writer
         )
 
         self.evaluation_metrics = MetricTracker(
-            "loss", *[m for m in self.metrics["val"]], writer=self.writer
+            "loss", "mel_loss", "fmap_loss", "gan_loss", *[m.name for m in self.metrics["val"]], writer=self.writer
         )
 
 
@@ -193,7 +193,6 @@ class Trainer(BaseTrainer):
         batch["fmap_loss"] = fmap_loss
         batch["gan_loss"] = gan_loss
         batch["mel_loss"] = loss_mel
-        
         batch["loss"] = self.criterion(gan_loss, fmap_loss, loss_mel)
 
         if is_train:
