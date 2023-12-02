@@ -48,15 +48,17 @@ def main(config):
     msd = MSD()
     mpd = MPD(**config["arch"]["args"]["MPD"])
 
-    x, fmaps = msd(wav)
-    print(x.shape)
+    outs, fmaps = msd(wav)
+    print(len(outs.shape))
+    print(outs[0].shape)
     print(len(fmaps))
     print(fmaps[0].shape)
 
     print("-----------------------")
 
-    x, fmaps = mpd(wav)
-    print(x.shape)
+    outs, fmaps = mpd(wav)
+    print(len(outs.shape))
+    print(outs[0].shape)
     print(len(fmaps))
     print(fmaps[0].shape)
 
