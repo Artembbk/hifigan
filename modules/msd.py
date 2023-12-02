@@ -34,8 +34,8 @@ class SubMSD(nn.Module):
         x_real = torch.flatten(x_real, 1, -1)
         x_gen = torch.flatten(x_gen, 1, -1)
 
-        real_loss += torch.mean((1 - x_real)**2)
-        generated_loss += torch.mean(x_gen**2)
+        real_loss = torch.mean((1 - x_real)**2)
+        generated_loss = torch.mean(x_gen**2)
         gan_loss += real_loss + generated_loss
 
         return fmap_loss, gan_loss
