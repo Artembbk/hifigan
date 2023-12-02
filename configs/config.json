@@ -1,6 +1,6 @@
 {
     "name": "final",
-    "n_gpu": 2,
+    "n_gpu": 1,
     "preprocessing": {
       "sr": 22050,
       "spectrogram": {
@@ -41,7 +41,13 @@
               "data_dir": "/kaggle/input/ljspeech/data/datasets/ljspeech",
               "max_audio_length": 20.0
             }
-          },
+          }
+        ]
+      },
+      "val": {
+        "num_workers": 8,
+        "batch_size": 2,
+        "datasets": [
           {
             "type": "LJspeechDataset",
             "args": {
