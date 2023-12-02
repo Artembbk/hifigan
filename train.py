@@ -48,10 +48,14 @@ def main(config):
     # print(wav.shape)
     # print(generated_wav.shape)
     mpd = MPD(**config["arch"]["args"]["MPD"])
+    print(wav.shape)
+    print(generated_wav.shape)
     out_real = mpd(wav)
     out_generated = mpd(generated_wav)
-    print(out_real)
-    print(out_generated)
+    print(out_real[0].shape)
+    print(len(out_real))
+    print(out_generated[0].shape)
+    print(len(out_generated))
 
     # build model architecture, then print to console
     # model = config.init_obj(config["arch"], module_arch, n_class=len(text_encoder))
