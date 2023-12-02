@@ -53,7 +53,7 @@ def main(config):
     mel_specer = MelSpectrogram(MelSpectrogramConfig())
 
     generated_wav = generator(spec)
-    mel_from_gen = mel_specer(generated_wav.cpu()).to(device)
+    mel_from_gen = mel_specer(generated_wav.cpu())[..., :-1].to(device)
 
     print("spec: ", spec.shape)
     print("wav: ", wav.shape)
