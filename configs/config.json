@@ -39,7 +39,8 @@
             "args": {
               "part": "train",
               "data_dir": "/kaggle/input/ljspeech/data/datasets/ljspeech",
-              "max_audio_length": 20.0
+              "max_audio_length": 20.0,
+              "limit": 2
             }
           }
         ]
@@ -53,7 +54,8 @@
             "args": {
               "part": "test",
               "data_dir": "/kaggle/input/ljspeech/data/datasets/ljspeech",
-              "max_audio_length": 20.0
+              "max_audio_length": 20.0,
+              "limit": 2
             }
           }
         ]
