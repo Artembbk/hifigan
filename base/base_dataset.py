@@ -24,11 +24,13 @@ class BaseDataset(Dataset):
             spec_augs=None,
             limit=None,
             max_audio_length=None,
+            train=None
     ):
         self.config_parser = config_parser
         self.wave_augs = wave_augs
         self.spec_augs = spec_augs
         self.log_spec = config_parser["preprocessing"]["log_spec"]
+        self.train = train
 
         index = self._filter_records_from_dataset(index, max_audio_length, limit)
         # it's a good idea to sort index by audio length
@@ -40,8 +42,12 @@ class BaseDataset(Dataset):
         data_dict = self._index[ind]
         audio_path = data_dict["path"]
         audio_wave = self.load_audio(audio_path)
-        new_N = ((audio_wave.shape[1] + 255) // 256) * 256
-        audio_wave = torch.cat([audio_wave, torch.zeros(1, new_N - audio_wave.shape[1])], dim=1)
+        if not self.train:
+            new_N = ((audio_wave.shape[1] + 255) // 256) * 256
+            audio_wave = torch.cat([audio_wave, torch.zeros(1, new_N - audio_wave.shape[1])], dim=1)
+        else:
+            start_sample = random.randint(0, audio_wave.size(-1) - 8192)
+            audio_wave = audio_wave[start_sample:start_sample + 8192]
         audio_wave, audio_spec = self.process_wave(audio_wave)
 
         return {
