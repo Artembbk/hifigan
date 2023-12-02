@@ -9,6 +9,7 @@ import torch.nn.functional as F
 from torch.nn.utils import clip_grad_norm_
 from torchvision.transforms import ToTensor
 from tqdm import tqdm
+import torchaudio
 
 from base import BaseTrainer
 from base.base_text_encoder import BaseTextEncoder
@@ -158,6 +159,10 @@ class Trainer(BaseTrainer):
         wav = batch['audio'].unsqueeze(1)
 
         generated_wav = self.generator(spec)
+        audio_tensor = torch.squeeze(generated_wav, dim=0)  # Убираем размерность 1x1xT
+        # Сохранение аудио объекта в файл WAV
+        filename = 'output.wav'
+        torchaudio.save(filename, audio_tensor, 22050)
         mel_from_gen = self.mel_specer(generated_wav.cpu())[..., :-1].to(self.device)
 
         if is_train:
