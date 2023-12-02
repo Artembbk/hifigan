@@ -203,6 +203,9 @@ class Trainer(BaseTrainer):
                     self.lr_scheduler_g.step()
 
         metrics.update("loss", batch["loss"].item())
+        metrics.update("fmap_loss", batch["fmap_loss"].item())
+        metrics.update("mel_loss", batch["mel_loss"].item())
+        metrics.update("gan_loss", batch["gan_loss"].item())
         for met in self.metrics["train" if is_train else "val"]:
             metrics.update(met.name, met(**batch))
         return batch
