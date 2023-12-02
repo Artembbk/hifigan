@@ -40,9 +40,9 @@ def main(config):
     # setup data_loader instances
     dataloaders = get_dataloaders(config)
 
-    generator = Generator(**config["arch"]["args"]["Generator"]).to(device)
-    msd = MSD().to(device)
-    mpd = MPD(**config["arch"]["args"]["MPD"]).to(device)
+    generator = Generator(**config["arch"]["args"]["Generator"])
+    msd = MSD()
+    mpd = MPD(**config["arch"]["args"]["MPD"])
 
     logger.info(generator)
     logger.info(msd)

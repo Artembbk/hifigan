@@ -1,0 +1,125 @@
+{
+    "name": "final",
+    "n_gpu": 1,
+    "preprocessing": {
+        "sr": 22050,
+        "spectrogram": {
+            "type": "MelSpectrogram",
+            "args": {}
+        },
+        "log_spec": false
+    },
+    "augmentations": {
+        "wave": [],
+        "spectrogram": []
+    },
+    "arch": {
+        "type": "HiFiGAN",
+        "args": {
+            "Generator": {
+                "n_mels": 80,
+                "h_init": 256,
+                "ku": [
+                    16,
+                    16,
+                    8
+                ],
+                "kr": [
+                    3,
+                    5,
+                    7
+                ],
+                "dilations": [
+                    [
+                        [
+                            1
+                        ],
+                        [
+                            2
+                        ]
+                    ],
+                    [
+                        [
+                            2
+                        ],
+                        [
+                            6
+                        ]
+                    ],
+                    [
+                        [
+                            3
+                        ],
+                        [
+                            12
+                        ]
+                    ]
+                ]
+            },
+            "MPD": {
+                "ps": [
+                    2,
+                    3,
+                    5,
+                    7,
+                    11
+                ]
+            }
+        }
+    },
+    "data": {
+        "train": {
+            "num_workers": 8,
+            "batch_size": 2,
+            "datasets": [
+                {
+                    "type": "LJspeechDataset",
+                    "args": {
+                        "part": "train",
+                        "data_dir": "/kaggle/input/ljspeech/data/datasets/ljspeech",
+                        "max_audio_length": 20.0
+                    }
+                },
+                {
+                    "type": "LJspeechDataset",
+                    "args": {
+                        "part": "test",
+                        "data_dir": "/kaggle/input/ljspeech/data/datasets/ljspeech",
+                        "max_audio_length": 20.0
+                    }
+                }
+            ]
+        }
+    },
+    "optimizer": {
+        "type": "Adam",
+        "args": {
+            "lr": 0.0003
+        }
+    },
+    "loss": {
+        "type": "GeneratedLoss",
+        "args": {}
+    },
+    "lr_scheduler": {
+        "type": "OneCycleLR",
+        "args": {
+            "steps_per_epoch": 3000,
+            "epochs": 50,
+            "anneal_strategy": "cos",
+            "max_lr": 0.0003,
+            "pct_start": 0.2
+        }
+    },
+    "trainer": {
+        "epochs": 50,
+        "save_dir": "saved/",
+        "save_period": 5,
+        "verbosity": 2,
+        "monitor": "min val_loss",
+        "visualize": "wandb",
+        "wandb_project": "HiFiGAN",
+        "len_epoch": 3000,
+        "grad_norm_clip": 10
+    }
+}
