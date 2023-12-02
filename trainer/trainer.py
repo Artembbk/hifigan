@@ -159,7 +159,7 @@ class Trainer(BaseTrainer):
         wav = batch['audio'].unsqueeze(1)
 
         generated_wav = self.generator(spec)
-        audio_tensor = torch.squeeze(generated_wav, dim=0)  # Убираем размерность 1x1xT
+        audio_tensor = torch.squeeze(generated_wav.cpu(), dim=0)  # Убираем размерность 1x1xT
         # Сохранение аудио объекта в файл WAV
         filename = 'output.wav'
         torchaudio.save(filename, audio_tensor, 22050)
