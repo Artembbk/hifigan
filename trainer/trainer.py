@@ -189,6 +189,10 @@ class Trainer(BaseTrainer):
 
         fmap_loss = fmap_loss_msd + fmap_loss_mpd
         gan_loss = gan_loss_msd_g + gan_loss_mpd_g
+
+        batch["fmap_loss"] = fmap_loss
+        batch["gan_loss"] = gan_loss
+        batch["mel_loss"] = loss_mel
         
         batch["loss"] = self.criterion(gan_loss, fmap_loss, loss_mel)
 

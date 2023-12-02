@@ -82,6 +82,18 @@
       "type": "GeneratedLoss",
       "args": {}
     },
+    "metrics": {
+      "train": [
+        "mel_loss",
+        "fmap_loss",
+        "gan_loss"
+      ],
+      "val": [
+        "mel_loss",
+        "fmap_loss",
+        "gan_loss"
+      ]
+    },
     "lr_scheduler": {
       "Generator": {
         "type": "OneCycleLR",
