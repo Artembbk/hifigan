@@ -147,6 +147,8 @@ class Trainer(BaseTrainer):
         return log
 
     def process_batch(self, batch, is_train: bool, metrics: MetricTracker):
+        torch.autograd.set_detect_anomaly(True)
+
         batch = self.move_batch_to_device(batch, self.device)
 
         spec = batch['spectrogram'][..., :-1]
