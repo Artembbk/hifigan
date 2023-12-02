@@ -24,6 +24,7 @@ class SubMPD(nn.Module):
 
     def forward(self, x_real, x_gen):
         fmap_loss = 0
+        gan_loss
 
         b, c, t = x_real.shape
         if t % self.p != 0:
