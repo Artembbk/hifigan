@@ -28,7 +28,7 @@ np.random.seed(SEED)
 from datasets import LJspeechDataset
 from modules import Generator
 from modules import MPD
-
+from modules import MSD
 
 def main(config):
 
@@ -47,11 +47,11 @@ def main(config):
     generated_wav = generator(spec)
     # print(wav.shape)
     # print(generated_wav.shape)
-    mpd = MPD(**config["arch"]["args"]["MPD"])
+    msd = MSD()
     print(wav.shape)
     print(generated_wav.shape)
-    out_real = mpd(wav)
-    out_generated = mpd(generated_wav)
+    out_real = msd(wav)
+    out_generated = msd(generated_wav)
     print(out_real[0].shape)
     print(len(out_real))
     print(out_generated[0].shape)
