@@ -53,7 +53,7 @@ def main(config):
     mel_specer = MelSpectrogram(MelSpectrogramConfig())
 
     generated_wav = generator(spec)
-    mel_from_gen = mel_specer(generated_wav)
+    mel_from_gen = mel_specer(generated_wav.cpu())
 
     msd_outs, msd_fmaps = msd(wav)
     print(len(msd_outs))
