@@ -58,8 +58,8 @@ class MPD(nn.Module):
         outs = []
         feature_maps = []
         for discriminator in self.mpds:
-            x, sub_feature_maps = discriminator(x)
-            outs.append(x)
+            x_out, sub_feature_maps = discriminator(x)
+            outs.append(x_out)
             feature_maps.extend(sub_feature_maps)
         return outs, feature_maps
 
