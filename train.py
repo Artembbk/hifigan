@@ -42,12 +42,13 @@ def main(config):
     dataloaders = get_dataloaders(config)
 
     samples = next(iter(dataloaders["train"]))
-    spec = samples['spectrogram'][..., :-1]
-    wav = samples['audio'].unsqueeze(1)
+    device, device_ids = prepare_device(config["n_gpu"])
+    spec = samples['spectrogram'][..., :-1].to(device)
+    wav = samples['audio'].unsqueeze(1).to(device)
 
-    generator = Generator(**config["arch"]["args"]["Generator"])
-    msd = MSD()
-    mpd = MPD(**config["arch"]["args"]["MPD"])
+    generator = Generator(**config["arch"]["args"]["Generator"]).to(device)
+    msd = MSD().to(device)
+    mpd = MPD(**config["arch"]["args"]["MPD"]).to(device)
 
     mel_specer = MelSpectrogram(MelSpectrogramConfig())
 
