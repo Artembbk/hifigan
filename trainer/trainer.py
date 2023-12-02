@@ -161,6 +161,7 @@ class Trainer(BaseTrainer):
         generated_wav = self.generator(spec)
         audio_tensor = torch.squeeze(generated_wav.cpu(), dim=0)  # Убираем размерность 1x1xT
         # Сохранение аудио объекта в файл WAV
+        print(audio_tensor.shape)
         filename = 'output.wav'
         torchaudio.save(filename, audio_tensor, 22050)
         mel_from_gen = self.mel_specer(generated_wav.cpu())[..., :-1].to(self.device)
