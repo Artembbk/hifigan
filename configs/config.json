@@ -40,7 +40,8 @@
               "part": "train",
               "data_dir": "/kaggle/input/ljspeech/data/datasets/ljspeech",
               "max_audio_length": 20.0,
-              "limit": 2
+              "limit": 2,
+              "train": true
             }
           }
         ]
@@ -55,7 +56,8 @@
               "part": "test",
               "data_dir": "/kaggle/input/ljspeech/data/datasets/ljspeech",
               "max_audio_length": 20.0,
-              "limit": 2
+              "limit": 2,
+              "train": false
             }
           }
         ]
