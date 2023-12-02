@@ -22,6 +22,7 @@ class SubMSD(nn.Module):
     def forward(self, x):
         feature_maps = []
         for conv in self.convs:
+            print(x.shape)
             x = self.leaky_relu(conv(x))
             feature_maps.append(x)
 
