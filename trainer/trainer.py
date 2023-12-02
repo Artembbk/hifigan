@@ -127,7 +127,10 @@ class Trainer(BaseTrainer):
                     )
                 )
                 self.writer.add_scalar(
-                    "learning rate", self.lr_scheduler.get_last_lr()[0]
+                    "learning rate", self.lr_scheduler_g.get_last_lr()[0]
+                )
+                self.writer.add_scalar(
+                    "learning rate", self.lr_scheduler_d.get_last_lr()[0]
                 )
                 # self._log_predictions(**batch)
                 self._log_spectrogram(batch["spectrogram"])
