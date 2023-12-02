@@ -19,17 +19,26 @@ class SubMSD(nn.Module):
         self.last_conv = weight_norm(nn.Conv1d(1024, 1, 3, 1, padding=1))
         
 
-    def forward(self, x):
-        feature_maps = []
+    def forward(self, x_real, x_gen):
+        fmap_loss = 0
+        gan_loss = 0
         for conv in self.convs:
-            x = self.leaky_relu(conv(x))
-            feature_maps.append(x)
+            x_real = self.leaky_relu(conv(x_real))
+            x_gen = self.leaky_relu(conv(x_gen))
+            fmap_loss += torch.mean(torch.abs(x_real - x_gen))
 
-        x = self.last_conv(x)
-        feature_maps.append(x)
-        x = torch.flatten(x, 1, -1)
+        x_real = self.last_conv(x_real)
+        x_gen = self.last_conv(x_gen)
+        fmap_loss += torch.mean(torch.abs(x_real - x_gen))
 
-        return x, feature_maps
+        x_real = torch.flatten(x_real, 1, -1)
+        x_gen = torch.flatten(x_gen, 1, -1)
+
+        real_loss += torch.mean((1 - x_real)**2)
+        generated_loss += torch.mean(x_gen**2)
+        gan_loss += real_loss + generated_loss
+
+        return fmap_loss, gan_loss
 
 
 class MSD(torch.nn.Module):
@@ -52,13 +61,9 @@ class MSD(torch.nn.Module):
             if i != 0:
                 x_real = self.avgpools[i-1](x_real)
                 x_gen = self.avgpools[i-1](x_gen)
-            x_out_real, sub_feature_maps_real = d(x_real)
-            x_out_gen, sub_feature_maps_gen = d(x_gen)
-            
-            fmap_loss += torch.mean(torch.abs(sub_feature_maps_gen - sub_feature_maps_real))
-            real_loss += torch.mean((1 - x_out_real)**2)
-            generated_loss += torch.mean(x_out_gen**2)
-            gan_loss += real_loss + generated_loss
+            sub_fmap_loss, sub_gan_loss = d(x_real, x_gen)
+            fmap_loss += sub_fmap_loss
+            gan_loss += sub_gan_loss
 
         return fmap_loss, gan_loss
 
