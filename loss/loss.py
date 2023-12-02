@@ -16,3 +16,11 @@ def gan_loss(r_disc_outs, g_disc_outs):
 def mel_loss(real_mel, generated_mel):
     return F.l1_loss(real_mel - generated_mel)
 
+def feature_matching_loss(feature_maps_generated, feature_maps_real):
+    loss = 0
+    for fmap_gen, fmap_real in zip(feature_maps_generated, feature_maps_real):
+        loss += torch.mean(torch.abs(fmap_gen - fmap_real))
+
+    return loss
+
+
