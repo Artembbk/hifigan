@@ -1,4 +1,4 @@
-import augmentations
+import hifigan.augmentations
 
 import argparse
 import collections
@@ -11,9 +11,9 @@ import torch
 # import hw_asr.metric as module_metric
 # import hw_asr.model as module_arch
 # from hw_asr.trainer import Trainer
-from utils import prepare_device
-from utils.object_loading import get_dataloaders
-from utils.parse_config import ConfigParser
+from hifigan.utils import prepare_device
+from hifigan.utils.object_loading import get_dataloaders
+from hifigan.utils.parse_config import ConfigParser
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -25,9 +25,9 @@ torch.backends.cudnn.benchmark = False
 np.random.seed(SEED)
 
 
-from datasets import LJspeechDataset
-from modules import Generator
-from modules import MPD
+from hifigan.datasets import LJspeechDataset
+from hifigan.modules import Generator
+from hifigan.modules import MPD
 
 
 def main(config):
