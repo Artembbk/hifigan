@@ -26,8 +26,8 @@ def feature_matching_loss(feature_maps_generated, feature_maps_real):
 class GeneratedLoss():
     def __init__(self) -> None:
         pass
-    
-    def __call__(adv_loss, fm_loss, mel_loss):
+
+    def __call__(self, adv_loss, fm_loss, mel_loss):
         return adv_loss + 2*fm_loss + 45*mel_loss
 
 
