@@ -45,15 +45,20 @@ class MSD(torch.nn.Module):
             nn.AvgPool1d(4, 2, padding=2)
         ])
 
-    def forward(self, x):
-        outs = []
-        feature_maps = []
+    def forward(self, x_real, x_gen):
+        fmap_loss = 0
+        gan_loss = 0
         for i, d in enumerate(self.discriminators):
             if i != 0:
-                x = self.avgpools[i-1](x)
-            x_out, sub_feature_maps = d(x)
-            outs.append(x_out)
-            feature_maps.extend(sub_feature_maps)
+                x_real = self.avgpools[i-1](x_real)
+                x_gen = self.avgpools[i-1](x_gen)
+            x_out_real, sub_feature_maps_real = d(x_real)
+            x_out_gen, sub_feature_maps_gen = d(x_gen)
+            
+            fmap_loss += torch.mean(torch.abs(sub_feature_maps_gen - sub_feature_maps_real))
+            real_loss += torch.mean((1 - x_out_real)**2)
+            generated_loss += torch.mean(x_out_gen**2)
+            gan_loss += real_loss + generated_loss
 
-        return outs, feature_maps
+        return fmap_loss, gan_loss
 

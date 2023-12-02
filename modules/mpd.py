@@ -54,14 +54,19 @@ class MPD(nn.Module):
 
         self.mpds = nn.ModuleList(self.mpds)
 
-    def forward(self, x):
-        outs = []
-        feature_maps = []
+    def forward(self, x_real, x_gen):
+        fmap_loss = 0
+        gan_loss = 0
         for discriminator in self.mpds:
-            x_out, sub_feature_maps = discriminator(x)
-            outs.append(x_out)
-            feature_maps.extend(sub_feature_maps)
-        return outs, feature_maps
+            x_out_real, sub_feature_maps_real = discriminator(x_real)
+            x_out_gen, sub_feature_maps_gen = discriminator(x_gen)
+            
+            fmap_loss += torch.mean(torch.abs(sub_feature_maps_gen - sub_feature_maps_real))
+            real_loss += torch.mean((1 - x_out_real)**2)
+            generated_loss += torch.mean(x_out_gen**2)
+            gan_loss += real_loss + generated_loss
+
+        return fmap_loss, gan_loss
 
 
 

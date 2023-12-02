@@ -27,7 +27,7 @@ from datasets import LJspeechDataset
 from modules import Generator
 from modules import MPD
 from modules import MSD
-from loss.loss import *
+from loss.loss import mel_loss
 from melspec import MelSpectrogram
 from melspec import MelSpectrogramConfig
 
@@ -53,50 +53,19 @@ def main(config):
     mel_specer = MelSpectrogram(MelSpectrogramConfig())
 
     generated_wav = generator(spec)
-    mel_from_gen = mel_specer(generated_wav.cpu())
+    mel_from_gen = mel_specer(generated_wav.cpu()).to(device)
 
-    msd_outs, msd_fmaps = msd(wav)
-    print(len(msd_outs))
-    print(msd_outs[0].shape)
-    print(len(msd_fmaps))
-    print(msd_fmaps[0].shape)
+    fmap_loss, gan_loss = msd(wav, generated_wav)
+    print(fmap_loss)
+    print(gan_loss)
 
-    print("-----------------------")
+    fmap_loss, gan_loss = mpd(wav, generated_wav)
+    print(fmap_loss)
+    print(gan_loss) 
 
-    mpd_outs, mpd_fmaps = mpd(wav)
-    print(len(mpd_outs))
-    print(mpd_outs[0].shape)
-    print(len(mpd_fmaps))
-    print(mpd_fmaps[0].shape)
-
-    print("_---------------------------")
-
-    msd_outs_gen, msd_fmaps_gen = msd(generated_wav)
-    print(len(msd_outs_gen))
-    print(msd_outs_gen[0].shape)
-    print(len(msd_fmaps_gen))
-    print(msd_fmaps_gen[0].shape)
-
-    print("-----------------------")
-
-    mpd_outs_gen, mpd_fmaps_gen = mpd(generated_wav)
-    print(len(mpd_outs_gen))
-    print(mpd_outs_gen[0].shape)
-    print(len(mpd_fmaps_gen))
-    print(mpd_fmaps_gen[0].shape)
-
-    print("_---------------------------")   
-
-    msd_gan_loss = gan_loss(msd_outs_gen, msd_outs)
-    mpd_gan_loss = gan_loss(mpd_outs_gen, mpd_outs)
     mel_loss_ = mel_loss(mel_from_gen, spec)
-    feature_mpd_loss = feature_matching_loss(mpd_fmaps_gen, mpd_fmaps)
-    feature_msd_loss = feature_matching_loss(msd_fmaps_gen, msd_fmaps)
-    print("msd_gan_loss: ", msd_gan_loss)
-    print("mpd_gan_loss: ", mpd_gan_loss)
+
     print("mel_loss_: ", mel_loss_)
-    print("feature_mpd_loss: ", feature_mpd_loss)
-    print("feature_msd_loss: ", feature_msd_loss)
 
 
 
