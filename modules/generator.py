@@ -26,7 +26,7 @@ class ResBlock(nn.Module):
                 out = self.leaky_relu(out)
                 out = self.convs[len(self.dilations[m])*m + l](out)
                 print(out.shape)
-            x += out
+            x = x + out
         return x
 
 class MRF(nn.Module):
@@ -44,7 +44,7 @@ class MRF(nn.Module):
         out = torch.empty_like(x).to(x.device)
         for res_block in self.res_blocks:
             x = res_block(x)
-            out += x
+            out = out + x
         
         return out
 
