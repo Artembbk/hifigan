@@ -23,4 +23,7 @@ def feature_matching_loss(feature_maps_generated, feature_maps_real):
 
     return loss
 
+def GeneratedLoss(adv_loss, fm_loss, mel_loss):
+    return adv_loss + 2*fm_loss + 45*mel_loss
+
 

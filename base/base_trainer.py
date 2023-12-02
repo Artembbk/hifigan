@@ -12,15 +12,18 @@ class BaseTrainer:
     Base class for all trainers
     """
 
-    def __init__(self, model: BaseModel, criterion, metrics, optimizer, config, device):
+    def __init__(self, generator, msd, mpd, criterion, metrics, optimizer_g, optimizer_d, config, device):
         self.device = device
         self.config = config
         self.logger = config.get_logger("trainer", config["trainer"]["verbosity"])
 
-        self.model = model
+        self.generator = generator
+        self.msd = msd
+        self.mpd = mpd
         self.criterion = criterion
         self.metrics = metrics
-        self.optimizer = optimizer
+        self.optimizer_g = optimizer_g
+        self.optimizer_d = optimizer_d
 
         # for interrupt saving
         self._last_epoch = 0

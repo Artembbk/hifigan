@@ -1,6 +1,7 @@
 import argparse
 import collections
 import warnings
+import itertools
 
 import numpy as np
 import torch
@@ -22,14 +23,12 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 np.random.seed(SEED)
 
-
-from datasets import LJspeechDataset
 from modules import Generator
 from modules import MPD
 from modules import MSD
-from loss.loss import mel_loss
-from melspec import MelSpectrogram
-from melspec import MelSpectrogramConfig
+import loss as module_loss
+from trainer import Trainer
+
 
 def main(config):
 
@@ -41,95 +40,55 @@ def main(config):
     # setup data_loader instances
     dataloaders = get_dataloaders(config)
 
-    samples = next(iter(dataloaders["train"]))
-    device, device_ids = prepare_device(config["n_gpu"])
-    spec = samples['spectrogram'][..., :-1].to(device)
-    wav = samples['audio'].unsqueeze(1).to(device)
-
     generator = Generator(**config["arch"]["args"]["Generator"]).to(device)
     msd = MSD().to(device)
     mpd = MPD(**config["arch"]["args"]["MPD"]).to(device)
 
-    mel_specer = MelSpectrogram(MelSpectrogramConfig())
+    logger.info(generator)
+    logger.info(msd)
+    logger.info(mpd)
 
-    generated_wav = generator(spec)
-    mel_from_gen = mel_specer(generated_wav.cpu())[..., :-1].to(device)
+    device, device_ids = prepare_device(config["n_gpu"])
+    generator = generator.to(device)
+    msd = msd.to(device)
+    mpd = mpd.to(device)
+    if len(device_ids) > 1:
+        generator = torch.nn.DataParallel(generator, device_ids=device_ids)
+        msd = torch.nn.DataParallel(msd, device_ids=device_ids)
+        mpd = torch.nn.DataParallel(mpd, device_ids=device_ids)
 
-    print("spec: ", spec.shape)
-    print("wav: ", wav.shape)
-    print("mel_from_gen: ", mel_from_gen.shape)
-    print("generated_wav: ", generated_wav.shape)
+    generator_params = filter(lambda p: p.requires_grad, generator.parameters())
+    optim_g = config.init_obj(config["optimizer"]["Generator"], torch.optim, generator_params)
+    discriminator_params = filter(lambda p: p.requires_grad, itertools.chain(msd.parameters(), mpd.parameters()))
+    optim_d = config.init_obj(config["optimizer"]["Discriminator"], torch.optim, discriminator_params)    
 
-    fmap_loss, gan_loss = msd(wav, generated_wav)
-    print(fmap_loss)
-    print(gan_loss)
+    loss_module = config.init_obj(config["loss"], module_loss).to(device)
+    lr_scheduler_g = config.init_obj(config["lr_scheduler"]["Generator"], torch.optim.lr_scheduler, optim_g)
+    lr_scheduler_d = config.init_obj(config["lr_scheduler"]["Discriminator"], torch.optim.lr_scheduler, optim_d)
+    
 
-    fmap_loss, gan_loss = mpd(wav, generated_wav)
-    print(fmap_loss)
-    print(gan_loss) 
+    metrics = {
+        "train": [],
+        "val": []
+    }
 
-    mel_loss_ = mel_loss(mel_from_gen, spec)
+    trainer = Trainer(
+        generator,
+        msd,
+        mpd,
+        loss_module,
+        metrics,
+        optim_g,
+        optim_d,
+        config=config,
+        device=device,
+        dataloaders=dataloaders,
+        lr_scheduler_g=lr_scheduler_g,
+        lr_scheduler_d=lr_scheduler_d,
+        len_epoch=config["trainer"].get("len_epoch", None)
+    )
 
-    print("mel_loss_: ", mel_loss_)
-
-
-
-
-
-
-
-    # logger.info(generator)
-    # logger.info(msd)
-    # logger.info(mpd)
-
-
-    # device, device_ids = prepare_device(config["n_gpu"])
-    # generator = generator.to(device)
-    # msd = msd.to(device)
-    # mpd = mpd.to(device)
-    # if len(device_ids) > 1:
-    #     model = torch.nn.DataParallel(model, device_ids=device_ids)
-    #     msd = torch.nn.DataParallel(msd, device_ids=device_ids)
-    #     mpd = torch.nn.DataParallel(mpd, device_ids=device_ids)
-
-    # # get function handles of loss and metrics
-    # loss_module = config.init_obj(config["loss"], module_loss).to(device)
-    # metrics = {
-    #     "train": [],
-    #     "val": []
-    # }
-    # metrics["train"] = [
-    #     config.init_obj(metric_dict, module_metric, text_encoder=text_encoder)
-    #     for metric_dict in config["metrics"]["train"]
-    # ]
-
-    # metrics["val"] = [
-    #     config.init_obj(metric_dict, module_metric, text_encoder=text_encoder)
-    #     for metric_dict in config["metrics"]["val"]
-    # ]
-
-
-
-    # # build optimizer, learning rate scheduler. delete every line containing lr_scheduler for
-    # # disabling scheduler
-    # trainable_params = filter(lambda p: p.requires_grad, model.parameters())
-    # optimizer = config.init_obj(config["optimizer"], torch.optim, trainable_params)
-    # lr_scheduler = config.init_obj(config["lr_scheduler"], torch.optim.lr_scheduler, optimizer)
-
-    # trainer = Trainer(
-    #     model,
-    #     loss_module,
-    #     metrics,
-    #     optimizer,
-    #     text_encoder=text_encoder,
-    #     config=config,
-    #     device=device,
-    #     dataloaders=dataloaders,
-    #     lr_scheduler=lr_scheduler,
-    #     len_epoch=config["trainer"].get("len_epoch", None)
-    # )
-
-    # trainer.train()
+    trainer.train()
 
 
 if __name__ == "__main__":

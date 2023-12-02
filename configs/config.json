@@ -41,6 +41,14 @@
               "data_dir": "/kaggle/input/ljspeech/data/datasets/ljspeech",
               "max_audio_length": 20.0
             }
+          },
+          {
+            "type": "LJspeechDataset",
+            "args": {
+              "part": "test",
+              "data_dir": "/kaggle/input/ljspeech/data/datasets/ljspeech",
+              "max_audio_length": 20.0
+            }
           }
         ]
       }
@@ -52,38 +60,8 @@
       }
     },
     "loss": {
-      "type": "CTCLoss",
+      "type": "GeneratedLoss",
       "args": {}
-    },
-    "metrics": {
-      "train": [
-        {
-          "type": "ArgmaxWERMetric",
-          "args": {
-            "name": "WER (argmax)"
-          }
-        },
-        {
-          "type": "ArgmaxCERMetric",
-          "args": {
-            "name": "CER (argmax)"
-          }
-        }
-      ],
-      "val": [
-        {
-          "type": "ArgmaxWERMetric",
-          "args": {
-            "name": "WER (argmax)"
-          }
-        },
-        {
-          "type": "ArgmaxCERMetric",
-          "args": {
-            "name": "CER (argmax)"
-          }
-        }
-      ]
     },
     "lr_scheduler": {
       "type": "OneCycleLR",
@@ -102,7 +80,7 @@
       "verbosity": 2,
       "monitor": "min val_loss",
       "visualize": "wandb",
-      "wandb_project": "asr_project",
+      "wandb_project": "HiFiGAN",
       "len_epoch": 3000,
       "grad_norm_clip": 10
     }
