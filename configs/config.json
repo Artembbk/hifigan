@@ -94,8 +94,8 @@
       "Discriminator": {
         "type": "OneCycleLR",
         "args": {
-          "steps_per_epoch": 3000,
-          "epochs": 50,
+          "steps_per_epoch": 500,
+          "epochs": 20,
           "anneal_strategy": "cos",
           "max_lr": 3e-4,
           "pct_start": 0.2
@@ -104,14 +104,14 @@
 
     },
     "trainer": {
-      "epochs": 50,
+      "epochs": 20,
       "save_dir": "saved/",
       "save_period": 5,
       "verbosity": 2,
       "monitor": "min val_loss",
       "visualize": "wandb",
       "wandb_project": "HiFiGAN",
-      "len_epoch": 3000,
+      "len_epoch": 500,
       "grad_norm_clip": 10
     }
   }
