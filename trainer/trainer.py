@@ -181,8 +181,8 @@ class Trainer(BaseTrainer):
         # L1 Mel-Spectrogram Loss
         loss_mel = mel_loss(mel_from_gen, spec)
 
-        fmap_loss_mpd, gan_loss_mpd_g = self.mpd(wav, generated_wav.detach())
-        fmap_loss_msd, gan_loss_msd_g = self.msd(wav, generated_wav.detach())
+        fmap_loss_mpd, gan_loss_mpd_g = self.mpd(wav, generated_wav)
+        fmap_loss_msd, gan_loss_msd_g = self.msd(wav, generated_wav)
 
         fmap_loss = fmap_loss_msd + fmap_loss_mpd
         gan_loss = gan_loss_msd_g + gan_loss_mpd_g
