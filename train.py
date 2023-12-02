@@ -60,13 +60,13 @@ def main(config):
     print("mel_from_gen: ", mel_from_gen.shape)
     print("generated_wav: ", generated_wav.shape)
 
-    # fmap_loss, gan_loss = msd(wav, generated_wav)
-    # print(fmap_loss)
-    # print(gan_loss)
+    fmap_loss, gan_loss = msd(wav, generated_wav)
+    print(fmap_loss)
+    print(gan_loss)
 
-    # fmap_loss, gan_loss = mpd(wav, generated_wav)
-    # print(fmap_loss)
-    # print(gan_loss) 
+    fmap_loss, gan_loss = mpd(wav, generated_wav)
+    print(fmap_loss)
+    print(gan_loss) 
 
     mel_loss_ = mel_loss(mel_from_gen, spec)
 
