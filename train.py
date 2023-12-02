@@ -39,33 +39,40 @@ def main(config):
 
     # setup data_loader instances
     dataloaders = get_dataloaders(config)
+
     samples = next(iter(dataloaders["train"]))
     spec = samples['spectrogram'][..., :-1]
     wav = samples['audio'].unsqueeze(1)
 
     generator = Generator(**config["arch"]["args"]["Generator"])
-    generated_wav = generator(spec)
-    # print(wav.shape)
-    # print(generated_wav.shape)
     msd = MSD()
-    print(wav.shape)
-    print(generated_wav.shape)
-    out_real = msd(wav)
-    out_generated = msd(generated_wav)
-    print(out_real[0].shape)
-    print(len(out_real))
-    print(out_generated[0].shape)
-    print(len(out_generated))
+    mpd = MPD(**config["arch"]["args"]["MPD"])
 
-    # build model architecture, then print to console
-    # model = config.init_obj(config["arch"], module_arch, n_class=len(text_encoder))
-    # logger.info(model)
+    x, fmaps = msd(wav)
+    print(x.shape)
+    print(len(fmaps))
+    print(fmaps[0].shape)
 
-    # # prepare for (multi-device) GPU training
+    print("-----------------------")
+
+    x, fmaps = mpd(wav)
+    print(x.shape)
+    print(len(fmaps))
+    print(fmaps[0].shape)
+
+    # logger.info(generator)
+    # logger.info(msd)
+    # logger.info(mpd)
+
+
     # device, device_ids = prepare_device(config["n_gpu"])
-    # model = model.to(device)
+    # generator = generator.to(device)
+    # msd = msd.to(device)
+    # mpd = mpd.to(device)
     # if len(device_ids) > 1:
     #     model = torch.nn.DataParallel(model, device_ids=device_ids)
+    #     msd = torch.nn.DataParallel(msd, device_ids=device_ids)
+    #     mpd = torch.nn.DataParallel(mpd, device_ids=device_ids)
 
     # # get function handles of loss and metrics
     # loss_module = config.init_obj(config["loss"], module_loss).to(device)
