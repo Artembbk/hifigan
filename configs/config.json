@@ -1,6 +1,6 @@
 {
     "name": "final",
-    "n_gpu": 1,
+    "n_gpu": 2,
     "preprocessing": {
       "sr": 22050,
       "spectrogram": {
