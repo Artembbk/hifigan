@@ -70,8 +70,8 @@
       "Generator": {
         "type": "OneCycleLR",
         "args": {
-          "steps_per_epoch": 1000,
-          "epochs": 1,
+          "steps_per_epoch": 3000,
+          "epochs": 50,
           "anneal_strategy": "cos",
           "max_lr": 3e-4,
           "pct_start": 0.2
@@ -80,7 +80,7 @@
       "Discriminator": {
         "type": "OneCycleLR",
         "args": {
-          "steps_per_epoch": 1000,
+          "steps_per_epoch": 500,
           "epochs": 1,
           "anneal_strategy": "cos",
           "max_lr": 3e-4,
@@ -97,7 +97,7 @@
       "monitor": "min val_loss",
       "visualize": "wandb",
       "wandb_project": "HiFiGAN",
-      "len_epoch": 1000,
+      "len_epoch": 500,
       "grad_norm_clip": 10
     }
   }
