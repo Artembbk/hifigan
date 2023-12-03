@@ -45,6 +45,22 @@
             }
           }
         ]
+      },
+      "val": {
+        "num_workers": 8,
+        "batch_size": 16,
+        "datasets": [
+          {
+            "type": "LJspeechDataset",
+            "args": {
+              "part": "test",
+              "data_dir": "/kaggle/input/ljspeech/data/datasets/ljspeech",
+              "max_audio_length": 20.0,
+              "limit": 16,
+              "train": false
+            }
+          }
+        ]
       }
     },
     "optimizer": {
