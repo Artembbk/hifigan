@@ -197,7 +197,7 @@ class Trainer(BaseTrainer):
         gan_loss = 0
 
         batch["fmap_loss"] = fmap_loss
-        batch["gan_loss"] = gan_loss
+        # batch["gan_loss"] = gan_loss
         batch["mel_loss"] = loss_mel
         batch["loss"] = self.criterion(gan_loss, fmap_loss, loss_mel)
 
@@ -211,7 +211,7 @@ class Trainer(BaseTrainer):
         metrics.update("loss", batch["loss"].item())
         metrics.update("fmap_loss", batch["fmap_loss"].item())
         metrics.update("mel_loss", batch["mel_loss"].item())
-        metrics.update("gan_loss", batch["gan_loss"].item())
+        # metrics.update("gan_loss", batch["gan_loss"].item())
         for met in self.metrics["train" if is_train else "val"]:
             metrics.update(met.name, met(**batch))
         return batch
