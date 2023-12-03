@@ -169,12 +169,12 @@ class Trainer(BaseTrainer):
             self.optimizer_d.zero_grad()
 
         # MPD
-        _, gan_loss_mpd = self.mpd(wav, generated_wav.detach())
+        _, disc_loss_mpd, _ = self.mpd(wav, generated_wav.detach())
 
         # MSD
-        _, gan_loss_msd = self.msd(wav, generated_wav.detach())
+        _, disc_loss_msd, _ = self.msd(wav, generated_wav.detach())
 
-        loss_disc_all = gan_loss_msd + gan_loss_mpd
+        loss_disc_all = disc_loss_msd + disc_loss_mpd
 
         if is_train:
             loss_disc_all.backward()
@@ -189,15 +189,14 @@ class Trainer(BaseTrainer):
         # L1 Mel-Spectrogram Loss
         loss_mel = mel_loss(mel_from_gen, spec)
 
-        fmap_loss_mpd, gan_loss_mpd_g = self.mpd(wav, generated_wav)
-        fmap_loss_msd, gan_loss_msd_g = self.msd(wav, generated_wav)
+        fmap_loss_mpd, _, gen_loss_mpd_g = self.mpd(wav, generated_wav)
+        fmap_loss_msd, _, gen_loss_msd_g = self.msd(wav, generated_wav)
 
         fmap_loss = fmap_loss_msd + fmap_loss_mpd
-        gan_loss = gan_loss_msd_g + gan_loss_mpd_g
-        gan_loss = 0
-
+        gan_loss = gen_loss_msd_g + gen_loss_mpd_g
+        
         batch["fmap_loss"] = fmap_loss
-        # batch["gan_loss"] = gan_loss
+        batch["gan_loss"] = gan_loss
         batch["mel_loss"] = loss_mel
         batch["loss"] = self.criterion(gan_loss, fmap_loss, loss_mel)
 
@@ -211,7 +210,7 @@ class Trainer(BaseTrainer):
         metrics.update("loss", batch["loss"].item())
         metrics.update("fmap_loss", batch["fmap_loss"].item())
         metrics.update("mel_loss", batch["mel_loss"].item())
-        # metrics.update("gan_loss", batch["gan_loss"].item())
+        metrics.update("gan_loss", batch["gan_loss"].item())
         for met in self.metrics["train" if is_train else "val"]:
             metrics.update(met.name, met(**batch))
         return batch
