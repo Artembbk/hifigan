@@ -208,7 +208,7 @@ class Trainer(BaseTrainer):
             self._clip_grad_norm()
             self.optimizer_g.step()
             if self.lr_scheduler_g is not None:
-                    self.lr_scheduler_g.step()
+                self.lr_scheduler_g.step()
 
         metrics.update("loss", batch["loss"].item())
         # metrics.update("fmap_loss", batch["fmap_loss"].item())
@@ -246,7 +246,11 @@ class Trainer(BaseTrainer):
             self._log_spectrogram(batch["spectrogram"])
 
         # add histogram of model parameters to the tensorboard
-        for name, p in self.model.named_parameters():
+        for name, p in self.generator.named_parameters():
+            self.writer.add_histogram(name, p, bins="auto")
+        for name, p in self.msd.named_parameters():
+            self.writer.add_histogram(name, p, bins="auto")
+        for name, p in self.mpd.named_parameters():
             self.writer.add_histogram(name, p, bins="auto")
         return self.evaluation_metrics.result()
 
