@@ -139,11 +139,11 @@ class BaseTrainer:
         :param epoch: current epoch number
         :param save_best: if True, rename the saved checkpoint to 'model_best.pth'
         """
-        arch = type(self.model).__name__
+        arch = type(self.generator).__name__
         state = {
             "arch": arch,
             "epoch": epoch,
-            "state_dict": self.model.state_dict(),
+            "state_dict": self.generator.state_dict(),
             "optimizer": self.optimizer.state_dict(),
             "monitor_best": self.mnt_best,
             "config": self.config,
@@ -176,7 +176,7 @@ class BaseTrainer:
                 "Warning: Architecture configuration given in config file is different from that "
                 "of checkpoint. This may yield an exception while state_dict is being loaded."
             )
-        self.model.load_state_dict(checkpoint["state_dict"])
+        self.generator.load_state_dict(checkpoint["state_dict"])
 
         # load optimizer state from checkpoint only when optimizer type is not changed.
         if (

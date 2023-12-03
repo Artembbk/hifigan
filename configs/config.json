@@ -65,15 +65,17 @@
     },
     "optimizer": {
       "Generator": {
-        "type": "Adam",
+        "type": "AdamW",
         "args": {
-          "lr": 3e-4
+          "lr": 2e-4,
+          "weight_decay": 0.01
         }
       },
       "Discriminator": {
-        "type": "Adam",
+        "type": "AdamW",
         "args": {
-          "lr": 3e-4
+          "lr": 2e-4,
+          "weight_decay": 0.01
         }
       }
 
