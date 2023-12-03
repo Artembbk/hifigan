@@ -84,7 +84,7 @@ class Trainer(BaseTrainer):
             clip_grad_norm_(
                 filter(lambda p: p.requires_grad, itertools.chain(self.msd.parameters(), self.mpd.parameters())), self.config["trainer"]["grad_norm_clip"]
             )
-            
+
     def _train_epoch(self, epoch):
         """
         Training logic for an epoch
@@ -144,7 +144,8 @@ class Trainer(BaseTrainer):
         for part, dataloader in self.evaluation_dataloaders.items():
             val_log = self._evaluation_epoch(epoch, part, dataloader)
             log.update(**{f"{part}_{name}": value for name, value in val_log.items()})
-
+        if self.lr_scheduler_g is not None:
+            self.lr_scheduler_g.step()
         return log
 
     def process_batch(self, batch, is_train: bool, metrics: MetricTracker):
@@ -202,8 +203,6 @@ class Trainer(BaseTrainer):
             batch["loss"].backward()
             self._clip_grad_norm()
             self.optimizer_g.step()
-            if self.lr_scheduler_g is not None:
-                self.lr_scheduler_g.step()
 
         metrics.update("loss", batch["loss"].item())
         # metrics.update("fmap_loss", batch["fmap_loss"].item())
