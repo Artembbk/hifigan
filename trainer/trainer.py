@@ -17,7 +17,7 @@ from logger.utils import plot_spectrogram_to_buf
 from utils import inf_loop, MetricTracker
 from melspec import *
 from loss import mel_loss
-
+import itertools
 
 class Trainer(BaseTrainer):
     """
@@ -79,15 +79,12 @@ class Trainer(BaseTrainer):
     def _clip_grad_norm(self):
         if self.config["trainer"].get("grad_norm_clip", None) is not None:
             clip_grad_norm_(
-                self.generator.parameters(), self.config["trainer"]["grad_norm_clip"]
+                filter(lambda p: p.requires_grad, self.generator.parameters()), self.config["trainer"]["grad_norm_clip"]
             )
             clip_grad_norm_(
-                self.msd.parameters(), self.config["trainer"]["grad_norm_clip"]
+                filter(lambda p: p.requires_grad, itertools.chain(self.msd.parameters(), self.mpd.parameters())), self.config["trainer"]["grad_norm_clip"]
             )
-            clip_grad_norm_(
-                self.mpd.parameters(), self.config["trainer"]["grad_norm_clip"]
-            )
-
+            
     def _train_epoch(self, epoch):
         """
         Training logic for an epoch
@@ -161,10 +158,6 @@ class Trainer(BaseTrainer):
         generated_wav = self.generator(spec)
         self.writer.add_audio("real", wav[0, :, :].squeeze(1), 22050)
         self.writer.add_audio("generated", generated_wav[0, :, :].squeeze(1), 22050)
-        # audio_tensor = generated_wav[0, :, :].cpu()  # Убираем размерность 1x1xT
-        # Сохранение аудио объекта в файл WAV
-        # filename = 'output.wav'
-        # torchaudio.save(filename, audio_tensor, 22050)
         mel_from_gen = self.mel_specer(generated_wav.cpu())[..., :-1].to(self.device)
 
         # if is_train:
