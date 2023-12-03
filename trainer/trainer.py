@@ -156,9 +156,10 @@ class Trainer(BaseTrainer):
         batch = self.move_batch_to_device(batch, self.device)
 
         spec = batch['spectrogram'][..., :-1]
-        # wav = batch['audio'].unsqueeze(1)
+        wav = batch['audio'].unsqueeze(1)
 
         generated_wav = self.generator(spec)
+        self.writer.add_audio("real", wav[0, :, :].squeeze(1), 22050)
         self.writer.add_audio("generated", generated_wav[0, :, :].squeeze(1), 22050)
         # audio_tensor = generated_wav[0, :, :].cpu()  # Убираем размерность 1x1xT
         # Сохранение аудио объекта в файл WAV
