@@ -86,23 +86,13 @@
     },
     "lr_scheduler": {
       "Generator": {
-        "type": "OneCycleLR",
+        "type": "MultiplicativeLR",
         "args": {
-          "steps_per_epoch": 100,
-          "epochs": 5,
-          "anneal_strategy": "cos",
-          "max_lr": 3e-4,
-          "pct_start": 0.2
         }
       },
       "Discriminator": {
-        "type": "OneCycleLR",
+        "type": "MultiplicativeLR",
         "args": {
-          "steps_per_epoch": 100,
-          "epochs": 5,
-          "anneal_strategy": "cos",
-          "max_lr": 3e-4,
-          "pct_start": 0.2
         }
       }
 
