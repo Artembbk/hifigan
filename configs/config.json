@@ -86,8 +86,8 @@
       "Generator": {
         "type": "OneCycleLR",
         "args": {
-          "steps_per_epoch": 3000,
-          "epochs": 50,
+          "steps_per_epoch": 1000,
+          "epochs": 1,
           "anneal_strategy": "cos",
           "max_lr": 3e-4,
           "pct_start": 0.2
@@ -96,8 +96,8 @@
       "Discriminator": {
         "type": "OneCycleLR",
         "args": {
-          "steps_per_epoch": 500,
-          "epochs": 20,
+          "steps_per_epoch": 1000,
+          "epochs": 1,
           "anneal_strategy": "cos",
           "max_lr": 3e-4,
           "pct_start": 0.2
@@ -106,14 +106,14 @@
 
     },
     "trainer": {
-      "epochs": 20,
+      "epochs": 1,
       "save_dir": "saved/",
       "save_period": 5,
       "verbosity": 2,
       "monitor": "min val_loss",
       "visualize": "wandb",
       "wandb_project": "HiFiGAN",
-      "len_epoch": 500,
+      "len_epoch": 1000,
       "grad_norm_clip": 10
     }
   }
