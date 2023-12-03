@@ -1,5 +1,5 @@
 {
-    "name": "final",
+    "name": "omg",
     "n_gpu": 1,
     "preprocessing": {
       "sr": 22050,
@@ -102,7 +102,7 @@
     "trainer": {
       "epochs": 20,
       "save_dir": "saved/",
-      "save_period": 5,
+      "save_period": 1,
       "verbosity": 2,
       "monitor": "min val_loss",
       "visualize": "wandb",
