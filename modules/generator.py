@@ -43,7 +43,7 @@ class MRF(nn.Module):
         self.res_blocks = nn.ModuleList(self.res_blocks)
 
     def forward(self, x):
-        out = torch.empty_like(x).to(x.device)
+        out = torch.zeros_like(x).to(x.device)
         for res_block in self.res_blocks:
             x = res_block(x)
             out = out + x
