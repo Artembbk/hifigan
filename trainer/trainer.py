@@ -159,7 +159,7 @@ class Trainer(BaseTrainer):
         # wav = batch['audio'].unsqueeze(1)
 
         generated_wav = self.generator(spec)
-        print(generated_wav,shape)
+        print(generated_wav.shape)
         self.writer.add_audio("generated", generated_wav, 22050)
         # audio_tensor = generated_wav[0, :, :].cpu()  # Убираем размерность 1x1xT
         # Сохранение аудио объекта в файл WAV
