@@ -68,14 +68,16 @@
         "type": "AdamW",
         "args": {
           "lr": 2e-4,
-          "weight_decay": 0.01
+          "weight_decay": 0.01,
+          "betas": [0.8, 0.99]
         }
       },
       "Discriminator": {
         "type": "AdamW",
         "args": {
           "lr": 2e-4,
-          "weight_decay": 0.01
+          "weight_decay": 0.01,
+          "betas": [0.8, 0.99]
         }
       }
 
@@ -86,26 +88,28 @@
     },
     "lr_scheduler": {
       "Generator": {
-        "type": "MultiplicativeLR",
+        "type": "ExponentialLR",
         "args": {
+          "gamma": 0.999
         }
       },
       "Discriminator": {
-        "type": "MultiplicativeLR",
+        "type": "ExponentialLR",
         "args": {
+          "gamma": 0.999
         }
       }
 
     },
     "trainer": {
-      "epochs": 5,
+      "epochs": 20,
       "save_dir": "saved/",
       "save_period": 5,
       "verbosity": 2,
       "monitor": "min val_loss",
       "visualize": "wandb",
       "wandb_project": "HiFiGAN",
-      "len_epoch": 100,
+      "len_epoch": 1000,
       "grad_norm_clip": 10
     }
   }

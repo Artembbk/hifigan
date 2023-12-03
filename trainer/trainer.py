@@ -59,7 +59,7 @@ class Trainer(BaseTrainer):
         self.log_step = 10
 
         self.train_metrics = MetricTracker(
-            "loss", "grad norm", "mel_loss", "fmap_loss", "gan_loss", *[m.name for m in self.metrics["train"]], writer=self.writer
+            "loss", "grad norm gen", "mel_loss", "fmap_loss", "gan_loss", *[m.name for m in self.metrics["train"]], writer=self.writer
         )
 
         self.evaluation_metrics = MetricTracker(
@@ -119,7 +119,7 @@ class Trainer(BaseTrainer):
                     continue
                 else:
                     raise e
-            # self.train_metrics.update("grad norm", self.get_grad_norm())
+            self.train_metrics.update("grad norm gen", self.get_grad_norm(self.generator))
             if batch_idx % self.log_step == 0:
                 self.writer.set_step((epoch - 1) * self.len_epoch + batch_idx)
                 self.logger.debug(
@@ -156,13 +156,14 @@ class Trainer(BaseTrainer):
         batch = self.move_batch_to_device(batch, self.device)
 
         spec = batch['spectrogram'][..., :-1]
-        wav = batch['audio'].unsqueeze(1)
+        # wav = batch['audio'].unsqueeze(1)
 
         generated_wav = self.generator(spec)
-        audio_tensor = generated_wav[0, :, :].cpu()  # Убираем размерность 1x1xT
+        self.writer.add_audio("generated", generated_wav, 22050)
+        # audio_tensor = generated_wav[0, :, :].cpu()  # Убираем размерность 1x1xT
         # Сохранение аудио объекта в файл WAV
-        filename = 'output.wav'
-        torchaudio.save(filename, audio_tensor, 22050)
+        # filename = 'output.wav'
+        # torchaudio.save(filename, audio_tensor, 22050)
         mel_from_gen = self.mel_specer(generated_wav.cpu())[..., :-1].to(self.device)
 
         # if is_train:
@@ -184,7 +185,7 @@ class Trainer(BaseTrainer):
         #         self.lr_scheduler_d.step()
 
         # # Generator
-        # self.optimizer_g.zero_grad()
+        self.optimizer_g.zero_grad()
 
         # L1 Mel-Spectrogram Loss
         loss_mel = mel_loss(mel_from_gen, spec)
@@ -306,8 +307,8 @@ class Trainer(BaseTrainer):
         self.writer.add_image("spectrogram", ToTensor()(image))
 
     @torch.no_grad()
-    def get_grad_norm(self, norm_type=2):
-        parameters = self.model.parameters()
+    def get_grad_norm(self, model, norm_type=2):
+        parameters = model.parameters()
         if isinstance(parameters, torch.Tensor):
             parameters = [parameters]
         parameters = [p for p in parameters if p.grad is not None]
