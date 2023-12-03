@@ -32,7 +32,7 @@
     "data": {
       "train": {
         "num_workers": 8,
-        "batch_size": 2,
+        "batch_size": 16,
         "datasets": [
           {
             "type": "LJspeechDataset",
@@ -40,7 +40,7 @@
               "part": "train",
               "data_dir": "/kaggle/input/ljspeech/data/datasets/ljspeech",
               "max_audio_length": 20.0,
-              "limit": 2,
+              "limit": 16,
               "train": true
             }
           }
@@ -48,7 +48,7 @@
       },
       "val": {
         "num_workers": 8,
-        "batch_size": 2,
+        "batch_size": 16,
         "datasets": [
           {
             "type": "LJspeechDataset",
@@ -56,7 +56,7 @@
               "part": "test",
               "data_dir": "/kaggle/input/ljspeech/data/datasets/ljspeech",
               "max_audio_length": 20.0,
-              "limit": 2,
+              "limit": 16,
               "train": false
             }
           }
