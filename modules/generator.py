@@ -9,6 +9,7 @@ import torch.nn as nn
 from torch.nn import Conv1d, ConvTranspose1d, AvgPool1d, Conv2d
 from torch.nn.utils import weight_norm, remove_weight_norm, spectral_norm
 from utils import init_weights, get_padding
+from env import AttrDict, build_env
 
 LRELU_SLOPE = 0.1
 
@@ -116,7 +117,7 @@ class Generator(torch.nn.Module):
                 "world_size": 1
             }
         }
-        self.h = h
+        self.h = AttrDict(h)
         self.num_kernels = len(h.resblock_kernel_sizes)
         self.num_upsamples = len(h.upsample_rates)
         self.conv_pre = weight_norm(Conv1d(80, h.upsample_initial_channel, 7, 1, padding=3))
