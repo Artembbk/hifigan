@@ -56,7 +56,7 @@ class Trainer(BaseTrainer):
         self.evaluation_dataloaders = {k: v for k, v in dataloaders.items() if k != "train"}
         self.lr_scheduler_g = lr_scheduler_g
         self.lr_scheduler_d = lr_scheduler_d
-        self.log_step = 10
+        self.log_step = 50
 
         self.train_metrics = MetricTracker(
             "loss", "grad norm gen", "mel_loss", "fmap_loss", "gan_loss", *[m.name for m in self.metrics["train"]], writer=self.writer

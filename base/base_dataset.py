@@ -46,7 +46,7 @@ class BaseDataset(Dataset):
             new_N = ((audio_wave.shape[1] + 255) // 256) * 256
             audio_wave = torch.cat([audio_wave, torch.zeros(1, new_N - audio_wave.shape[1])], dim=1)
         else:
-            start_sample = 1000
+            start_sample = random.randint(0, audio_wave.size(-1) - 8192)
             audio_wave = audio_wave[:, start_sample:start_sample + 8192]
         audio_wave, audio_spec = self.process_wave(audio_wave)
 
