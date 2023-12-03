@@ -9,6 +9,15 @@ import torch
 ROOT_PATH = Path(__file__).absolute().resolve().parent.parent
 
 
+def init_weights(m, mean=0.0, std=0.01):
+    classname = m.__class__.__name__
+    if classname.find("Conv") != -1:
+        m.weight.data.normal_(mean, std)
+
+def get_padding(kernel_size, dilation=1):
+    return int((kernel_size*dilation - dilation)/2)
+
+
 def ensure_dir(dirname):
     dirname = Path(dirname)
     if not dirname.is_dir():

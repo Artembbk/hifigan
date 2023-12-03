@@ -2,6 +2,7 @@ from typing import Any
 from torch import nn
 import torch
 from torch.nn.utils import weight_norm
+from utils.util import init_weights, get_padding
 
 class ResBlock(nn.Module):
     def __init__(self, channels, kernel_size, dilations):
@@ -18,6 +19,8 @@ class ResBlock(nn.Module):
                 self.convs.append(weight_norm(nn.Conv1d(channels, channels, kernel_size, dilation=dilations[m][l], padding=padding)))
 
         self.convs = nn.ModuleList(self.convs)
+
+        self.convs.apply(init_weights)
 
     def forward(self, x):
         for m, _ in enumerate(self.dilations):
@@ -52,6 +55,7 @@ class Generator(nn.Module):
         super(Generator, self).__init__()
 
         self.init_conv = weight_norm(nn.Conv1d(n_mels, h_init, 7, dilation=1, padding=3))
+        self.init_conv.apply(init_weights)
         self.leaky_relu = nn.LeakyReLU()
         self.layers = []
         in_channels = h_init
@@ -67,6 +71,7 @@ class Generator(nn.Module):
         self.layers = nn.Sequential(*self.layers)
 
         self.out_conv = weight_norm(nn.Conv1d(in_channels, 1, 7, padding=3))
+        self.out_conv.apply(init_weights)
         self.tanh = nn.Tanh()
 
     def forward(self, x):
