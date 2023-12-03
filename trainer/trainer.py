@@ -173,7 +173,7 @@ class Trainer(BaseTrainer):
 
         if is_train:
             loss_disc_all.backward()
-            self._clip_grad_norm()
+            # self._clip_grad_norm()
             self.optimizer_d.step()
             
         # # Generator
@@ -195,7 +195,7 @@ class Trainer(BaseTrainer):
 
         if is_train:
             batch["loss"].backward()
-            self._clip_grad_norm()
+            # self._clip_grad_norm()
             self.optimizer_g.step()
 
         metrics.update("loss", batch["loss"].item())
