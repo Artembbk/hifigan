@@ -165,35 +165,38 @@ class Trainer(BaseTrainer):
         torchaudio.save(filename, audio_tensor, 22050)
         mel_from_gen = self.mel_specer(generated_wav.cpu())[..., :-1].to(self.device)
 
-        if is_train:
-            self.optimizer_d.zero_grad()
+        # if is_train:
+        #     self.optimizer_d.zero_grad()
 
-        # MPD
-        _, disc_loss_mpd, _ = self.mpd(wav, generated_wav.detach())
+        # # MPD
+        # _, disc_loss_mpd, _ = self.mpd(wav, generated_wav.detach())
 
-        # MSD
-        _, disc_loss_msd, _ = self.msd(wav, generated_wav.detach())
+        # # MSD
+        # _, disc_loss_msd, _ = self.msd(wav, generated_wav.detach())
 
-        loss_disc_all = disc_loss_msd + disc_loss_mpd
+        # loss_disc_all = disc_loss_msd + disc_loss_mpd
 
-        if is_train:
-            loss_disc_all.backward()
-            self._clip_grad_norm()
-            self.optimizer_d.step()
-            if self.lr_scheduler_d is not None:
-                self.lr_scheduler_d.step()
+        # if is_train:
+        #     loss_disc_all.backward()
+        #     self._clip_grad_norm()
+        #     self.optimizer_d.step()
+        #     if self.lr_scheduler_d is not None:
+        #         self.lr_scheduler_d.step()
 
-        # Generator
-        self.optimizer_g.zero_grad()
+        # # Generator
+        # self.optimizer_g.zero_grad()
 
         # L1 Mel-Spectrogram Loss
         loss_mel = mel_loss(mel_from_gen, spec)
 
-        fmap_loss_mpd, _, gen_loss_mpd_g = self.mpd(wav, generated_wav)
-        fmap_loss_msd, _, gen_loss_msd_g = self.msd(wav, generated_wav)
+        # fmap_loss_mpd, _, gen_loss_mpd_g = self.mpd(wav, generated_wav)
+        # fmap_loss_msd, _, gen_loss_msd_g = self.msd(wav, generated_wav)
 
-        fmap_loss = fmap_loss_msd + fmap_loss_mpd
-        gan_loss = gen_loss_msd_g + gen_loss_mpd_g
+        # fmap_loss = fmap_loss_msd + fmap_loss_mpd
+        # gan_loss = gen_loss_msd_g + gen_loss_mpd_g
+
+        gan_loss = 0
+        fmap_loss = 0
         
         batch["fmap_loss"] = fmap_loss
         batch["gan_loss"] = gan_loss
