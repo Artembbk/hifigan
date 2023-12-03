@@ -77,45 +77,8 @@ class ResBlock2(torch.nn.Module):
 
 
 class Generator(torch.nn.Module):
-    def __init__(self):
+    def __init__(self, h):
         super(Generator, self).__init__()
-        h = {
-            "resblock": "2",
-            "num_gpus": 0,
-            "batch_size": 16,
-            "learning_rate": 0.0002,
-            "adam_b1": 0.8,
-            "adam_b2": 0.99,
-            "lr_decay": 0.999,
-            "seed": 1234,
-
-            "upsample_rates": [8,8,4],
-            "upsample_kernel_sizes": [16,16,8],
-            "upsample_initial_channel": 256,
-            "resblock_kernel_sizes": [3,5,7],
-            "resblock_dilation_sizes": [[1,2], [2,6], [3,12]],
-
-            "segment_size": 8192,
-            "num_mels": 80,
-            "num_freq": 1025,
-            "n_fft": 1024,
-            "hop_size": 256,
-            "win_size": 1024,
-
-            "sampling_rate": 22050,
-
-            "fmin": 0,
-            "fmax": 8000,
-            "fmax_for_loss": None,
-
-            "num_workers": 4,
-
-            "dist_config": {
-                "dist_backend": "nccl",
-                "dist_url": "tcp://localhost:54321",
-                "world_size": 1
-            }
-        }
         self.h = h
         self.num_kernels = len(h.resblock_kernel_sizes)
         self.num_upsamples = len(h.upsample_rates)
