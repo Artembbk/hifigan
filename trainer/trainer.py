@@ -130,6 +130,7 @@ class Trainer(BaseTrainer):
                 # self._log_predictions(**batch)
                 self._log_spectrogram(batch["spectrogram"])
                 self._log_scalars(self.train_metrics)
+
                 # we don't want to reset train metrics at the start of every epoch
                 # because we are interested in recent train metrics
                 last_train_metrics = self.train_metrics.result()
@@ -154,15 +155,13 @@ class Trainer(BaseTrainer):
 
         spec = batch['spectrogram'][..., :-1]
         wav = batch['audio'].unsqueeze(1)
-        wav_mel = self.mel_specer(wav)[..., :-1]
+        wav_mel = torch.log(self.mel_specer(wav)[..., :-1])
 
         spec = torch.autograd.Variable(spec.to(self.device, non_blocking=True))
         wav = torch.autograd.Variable(wav.to(self.device, non_blocking=True))
         wav_mel = torch.autograd.Variable(wav_mel.to(self.device, non_blocking=True))
 
         generated_wav = self.generator(spec)
-        self.writer.add_audio("real", wav[0, :, :].squeeze(1), 22050)
-        self.writer.add_audio("generated", generated_wav[0, :, :].squeeze(1), 22050)
         mel_from_gen = self.mel_specer(generated_wav.cpu())[..., :-1].to(self.device)
 
         if is_train:
