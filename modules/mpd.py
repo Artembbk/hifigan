@@ -77,7 +77,7 @@ class MPD(nn.Module):
             gen_loss += sub_gen_loss
             disc_loss += sub_disc_loss
 
-        return fmap_loss, disc_loss, gen_loss
+        return fmap_loss**2, disc_loss, gen_loss
 
 
 
