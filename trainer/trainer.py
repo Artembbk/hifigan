@@ -139,6 +139,7 @@ class Trainer(BaseTrainer):
                         audio_wave = torchaudio.functional.resample(audio_wave, sr, target_sr)
                     new_length = (audio_wave.shape[1] // 256) * 256
                     audio_wave = audio_wave[:, :new_length].unsqueeze(1)
+                    print(audio_wave.shape)
 
                     mel = self.mel_specer(audio_wave)[..., :-1]
                     generated_audio = self.generator(mel)
@@ -171,7 +172,6 @@ class Trainer(BaseTrainer):
 
         spec = batch['spectrogram'][..., :-1]
         wav = batch['audio'].unsqueeze(1)
-        print(wav.shape)
         wav_mel = self.mel_specer(wav)[..., :-1]
 
         spec = torch.autograd.Variable(spec.to(self.device, non_blocking=True))
