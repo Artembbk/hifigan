@@ -132,7 +132,7 @@ class Trainer(BaseTrainer):
                 self._log_scalars(self.train_metrics)
                 
                 for i in range(1, 4):
-                    audio_wave = self.load_audio("test/audio_{i}.wav").unsqueeze()
+                    audio_wave = self.train_dataloader.dataset.load_audio("test/audio_{i}.wav").unsqueeze()
                     new_length = (len(audio_wave) // 256) * 256
                     audio_wave = audio_wave[:new_length].unsqueeze(1)
 
