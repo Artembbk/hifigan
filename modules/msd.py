@@ -1,11 +1,12 @@
 from torch import nn
 import torch
-from torch.nn.utils import weight_norm
+from torch.nn.utils import weight_norm, spectral_norm
 
 class SubMSD(nn.Module):
-    def __init__(self):
+    def __init__(self, use_spectral_norm=False):
         super(SubMSD, self).__init__()
         self.leaky_relu = nn.LeakyReLU()
+        norm = spectral_norm if use_spectral_norm else weight_norm
         self.convs = nn.ModuleList([
             weight_norm(nn.Conv1d(1, 128, 15, 1, padding=7)),
             weight_norm(nn.Conv1d(128, 128, 41, 2, groups=4, padding=20)),
@@ -50,7 +51,7 @@ class MSD(torch.nn.Module):
     def __init__(self):
         super(MSD, self).__init__()
         self.discriminators = nn.ModuleList([
-            SubMSD(),
+            SubMSD(True),
             SubMSD(),
             SubMSD(),
         ])
