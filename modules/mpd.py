@@ -16,12 +16,10 @@ class SubMPD(nn.Module):
             self.layers.append(weight_norm(nn.Conv2d(channels, 2**(5+l), stride=(3,1), kernel_size=(5, 1), padding=(get_padding(5, 1), 0))))
             channels = 2**(5+l)
 
-        self.post_convs = []
-        self.post_convs.append(weight_norm(nn.Conv2d(2**(5+l), 1024, kernel_size=(5, 1), padding=(2, 0))))
-        self.post_convs.append(weight_norm(nn.Conv2d(1024, 1, kernel_size=(3, 1), padding=(1,0))))
+        self.layers.append(weight_norm(nn.Conv2d(2**(5+l), 1024, kernel_size=(5, 1), padding=(2, 0))))
+        self.post_conv = weight_norm(nn.Conv2d(1024, 1, kernel_size=(3, 1), padding=(1,0)))
 
         self.layers = nn.ModuleList(self.layers)
-        self.post_convs = nn.ModuleList(self.post_convs)
 
     def forward(self, x_real, x_gen):
         fmap_loss = 0
@@ -41,12 +39,10 @@ class SubMPD(nn.Module):
             x_real = self.leaky_relu(layer(x_real))
             x_gen = self.leaky_relu(layer(x_gen))
             fmap_loss += torch.mean(torch.abs(x_real - x_gen))
-            
 
-        for post_conv in self.post_convs:
-            x_real = self.leaky_relu(post_conv(x_real))
-            x_gen = self.leaky_relu(post_conv(x_gen))
-            fmap_loss += torch.mean(torch.abs(x_real - x_gen))
+        x_real = self.post_conv(x_real)
+        x_gen = self.post_conv(x_gen)
+        fmap_loss += torch.mean(torch.abs(x_real - x_gen))
 
         x_real = torch.flatten(x_real, 1, -1)
         x_gen = torch.flatten(x_gen, 1, -1)
