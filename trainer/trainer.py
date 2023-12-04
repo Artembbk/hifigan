@@ -134,6 +134,7 @@ class Trainer(BaseTrainer):
                 for i in range(1, 4):
                     audio_wave, sr = torchaudio.load(f"test/audio_{i}.wav")
                     audio_wave = audio_wave[0:1, :]  # remove all channels but the first
+                    print(audio_wave.shape)
                     target_sr = 22050
                     if sr != target_sr:
                         audio_wave = torchaudio.functional.resample(audio_wave, sr, target_sr)
