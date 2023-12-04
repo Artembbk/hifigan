@@ -134,12 +134,11 @@ class Trainer(BaseTrainer):
                 for i in range(1, 4):
                     audio_wave, sr = torchaudio.load(f"test/audio_{i}.wav")
                     audio_wave = audio_wave[0:1, :]  # remove all channels but the first
-                    print(audio_wave.shape)
                     target_sr = 22050
                     if sr != target_sr:
                         audio_wave = torchaudio.functional.resample(audio_wave, sr, target_sr)
-                    new_length = (len(audio_wave) // 256) * 256
-                    audio_wave = audio_wave[:new_length].unsqueeze(1)
+                    new_length = (audio_wave.shape[1] // 256) * 256
+                    audio_wave = audio_wave[:, :new_length].unsqueeze(1)
 
                     mel = self.mel_specer(audio_wave)[..., :-1]
                     generated_audio = self.generator(mel)
