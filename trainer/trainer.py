@@ -131,9 +131,16 @@ class Trainer(BaseTrainer):
                 self._log_spectrogram(batch["spectrogram"])
                 self._log_scalars(self.train_metrics)
                 
-                # audio_wave = self.load_audio("test/audio_1.wav")
-                # new_N = ((audio_wave.shape[1] + 255) // 256) * 256
-                # audio_wave = torch.cat([audio_wave, torch.zeros(1, new_N - audio_wave.shape[1])], dim=1)
+                for i in range(1, 4):
+                    audio_wave = self.load_audio("test/audio_{i}.wav").unsqueeze()
+                    new_length = (len(audio_wave) // 256) * 256
+                    audio_wave = audio_wave[:new_length].unsqueeze(1)
+
+                    mel = self.mel_specer(audio_wave)[..., :-1]
+                    generated_audio = self.generator(mel)
+                    self.writer.add_audio(f"real_{i}", audio_wave.squeeze(1), 22050)
+                    self.writer.add_audio(f"generated_{i}", generated_audio.squeeze(1), 22050)
+
 
 
                 # we don't want to reset train metrics at the start of every epoch
