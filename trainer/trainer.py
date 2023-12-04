@@ -154,6 +154,11 @@ class Trainer(BaseTrainer):
 
         spec = batch['spectrogram'][..., :-1]
         wav = batch['audio'].unsqueeze(1)
+        wav_mel = self.mel_specer(wav)
+
+        spec = torch.autograd.Variable(spec.to(self.device, non_blocking=True))
+        wav = torch.autograd.Variable(wav.to(self.device, non_blocking=True))
+        wav_mel = torch.autograd.Variable(wav_mel.to(self.device, non_blocking=True))
 
         generated_wav = self.generator(spec)
         self.writer.add_audio("real", wav[0, :, :].squeeze(1), 22050)
@@ -180,7 +185,7 @@ class Trainer(BaseTrainer):
         self.optimizer_g.zero_grad()
 
         # L1 Mel-Spectrogram Loss
-        loss_mel = mel_loss(mel_from_gen, spec)
+        loss_mel = mel_loss(mel_from_gen, wav_mel)
 
         fmap_loss_mpd, _, gen_loss_mpd_g = self.mpd(wav, generated_wav)
         fmap_loss_msd, _, gen_loss_msd_g = self.msd(wav, generated_wav)
