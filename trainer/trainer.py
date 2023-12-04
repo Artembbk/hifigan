@@ -132,7 +132,11 @@ class Trainer(BaseTrainer):
                 self._log_scalars(self.train_metrics)
                 
                 for i in range(1, 4):
-                    audio_wave = self.train_dataloader.dataset.load_audio("test/audio_{i}.wav").unsqueeze()
+                    audio_wave, sr = torchaudio.load(f"test/audio_{i}.wav")
+                    audio_wave = audio_wave[0:1, :]  # remove all channels but the first
+                    target_sr = 22050
+                    if sr != target_sr:
+                        audio_wave = torchaudio.functional.resample(audio_wave, sr, target_sr)
                     new_length = (len(audio_wave) // 256) * 256
                     audio_wave = audio_wave[:new_length].unsqueeze(1)
 
