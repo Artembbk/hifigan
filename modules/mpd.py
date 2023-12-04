@@ -52,8 +52,7 @@ class SubMPD(nn.Module):
         disc_loss += real_loss + generated_loss
 
         generated_loss_1 = torch.mean((1 - x_gen)**2)
-        real_loss_1 = torch.mean(x_real**2)
-        gen_loss += real_loss_1 + generated_loss_1
+        gen_loss += generated_loss_1
 
         return fmap_loss, disc_loss, gen_loss
 
