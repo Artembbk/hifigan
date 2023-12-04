@@ -28,6 +28,8 @@ class ResBlock(nn.Module):
             for l, _ in enumerate(self.dilations[m]):
                 out = self.leaky_relu(out)
                 out = self.convs[len(self.dilations[m])*m + l](out)
+            print(x)
+            print(out)
             x = x + out
         return x
 
