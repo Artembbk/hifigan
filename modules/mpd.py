@@ -13,12 +13,12 @@ class SubMPD(nn.Module):
         self.layers = []
         channels = 1
         for l in range(1, 5):
-            self.layers.append(weight_norm(nn.Conv2d(channels, 2**(5+l), stride=(3,1), kernel_size=(5, 1)), padding=(get_padding(5, 1), 0)))
+            self.layers.append(weight_norm(nn.Conv2d(channels, 2**(5+l), stride=(3,1), kernel_size=(5, 1), padding=(get_padding(5, 1), 0))))
             channels = 2**(5+l)
 
         self.post_convs = []
-        self.post_convs.append(weight_norm(nn.Conv2d(2**(5+l), 1024, kernel_size=(5, 1)), padding=(2, 0)))
-        self.post_convs.append(weight_norm(nn.Conv2d(1024, 1, kernel_size=(3, 1)), padding=(1,0)))
+        self.post_convs.append(weight_norm(nn.Conv2d(2**(5+l), 1024, kernel_size=(5, 1), padding=(2, 0))))
+        self.post_convs.append(weight_norm(nn.Conv2d(1024, 1, kernel_size=(3, 1), padding=(1,0))))
 
         self.layers = nn.ModuleList(self.layers)
         self.post_convs = nn.ModuleList(self.post_convs)
