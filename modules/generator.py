@@ -45,8 +45,10 @@ class MRF(nn.Module):
     def forward(self, x):
         out = torch.zeros_like(x).to(x.device)
         for res_block in self.res_blocks:
-            x = res_block(x)
-            out = out + x
+            xs = res_block(x)
+            out = out + xs
+
+        out = out /  len(self.res_blocks)
         
         return out
 
