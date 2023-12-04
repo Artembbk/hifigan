@@ -140,7 +140,7 @@ class Trainer(BaseTrainer):
                     new_length = (audio_wave.shape[1] // 256) * 256
                     audio_wave = audio_wave[:, :new_length].unsqueeze(1)
                     print(audio_wave.shape)
-                    mel = self.mel_specer(audio_wave)[..., :-1]
+                    mel = self.mel_specer(audio_wave)[..., :-1].squeeze(1)
                     print(mel.shape)
                     generated_audio = self.generator(mel)
                     self.writer.add_audio(f"real_{i}", audio_wave.squeeze(1), 22050)
