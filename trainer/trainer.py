@@ -154,7 +154,7 @@ class Trainer(BaseTrainer):
 
         spec = batch['spectrogram'][..., :-1]
         wav = batch['audio'].unsqueeze(1)
-        wav_mel = self.mel_specer(wav)
+        wav_mel = self.mel_specer(wav)[..., :-1]
 
         spec = torch.autograd.Variable(spec.to(self.device, non_blocking=True))
         wav = torch.autograd.Variable(wav.to(self.device, non_blocking=True))
