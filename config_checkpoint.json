@@ -1,0 +1,115 @@
+{
+    "name": "omg",
+    "n_gpu": 1,
+    "preprocessing": {
+      "sr": 22050,
+      "spectrogram": {
+        "type": "MelSpectrogram",
+        "args": {
+        }
+      },
+      "log_spec": false
+    },
+    "augmentations": {
+      "wave": [],
+      "spectrogram": []
+    },
+    "arch": {
+      "type": "HiFiGAN",
+      "args": {
+        "Generator": {
+          "n_mels": 80,
+          "h_init": 256,
+          "ku": [16, 16, 8],
+          "kr": [3, 5, 7],
+          "dilations": [[[1], [2]], [[2], [6]], [[3], [12]]]
+        },
+        "MPD": {
+          "ps":  [2, 3, 5, 7, 11]
+        }
+      }
+    },
+    "data": {
+      "train": {
+        "num_workers": 8,
+        "batch_size": 16,
+        "datasets": [
+          {
+            "type": "LJspeechDataset",
+            "args": {
+              "part": "train",
+              "data_dir": "/kaggle/input/ljspeech/data/datasets/ljspeech",
+              "max_audio_length": 20.0,
+              "train": true
+            }
+          }
+        ]
+      },
+      "val": {
+        "num_workers": 8,
+        "batch_size": 16,
+        "datasets": [
+          {
+            "type": "LJspeechDataset",
+            "args": {
+              "part": "test",
+              "data_dir": "/kaggle/input/ljspeech/data/datasets/ljspeech",
+              "max_audio_length": 20.0,
+              "train": false,
+              "limit": 16
+            }
+          }
+        ]
+      }
+    },
+    "optimizer": {
+      "Generator": {
+        "type": "AdamW",
+        "args": {
+          "lr": 2e-4,
+          "weight_decay": 0.01,
+          "betas": [0.8, 0.99]
+        }
+      },
+      "Discriminator": {
+        "type": "AdamW",
+        "args": {
+          "lr": 2e-4,
+          "weight_decay": 0.01,
+          "betas": [0.8, 0.99]
+        }
+      }
+
+    },
+    "loss": {
+      "type": "GeneratedLoss",
+      "args": {}
+    },
+    "lr_scheduler": {
+      "Generator": {
+        "type": "ExponentialLR",
+        "args": {
+          "gamma": 0.999
+        }
+      },
+      "Discriminator": {
+        "type": "ExponentialLR",
+        "args": {
+          "gamma": 0.999
+        }
+      }
+
+    },
+    "trainer": {
+      "epochs": 200,
+      "save_dir": "saved/",
+      "save_period": 1,
+      "verbosity": 2,
+      "monitor": "min val_loss",
+      "visualize": "wandb",
+      "wandb_project": "HiFiGAN",
+      "len_epoch": 100,
+      "grad_norm_clip": 10
+    }
+  }
+  
